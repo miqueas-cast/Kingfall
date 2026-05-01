@@ -17,9 +17,9 @@ static int ValidacionEntradas(string mensaje, int min, int max)
     } while (!esValido);
     return valor;
 }
-
+//Los usuarios y contraseñas
 string[] usuarios = { "jugador1", "jugador2", "jugador3" };
-string[] contrasenas = { "1122", "1234", "4444" };
+string[] contrasenas = { "Kingfa!!1", "Jugad0r#2", "Jueg0Kingfa!!" }; //Cambie las contraseñas por unas válidas
 
 bool UsuarioExiste(string usuario)
 {
@@ -44,6 +44,47 @@ bool ContrasenaCorrecta(string usuario, string contrasena)
 Console.WriteLine("   ▄█   ▄█▄  ▄█  ███▄▄▄▄      ▄██████▄     ▄████████    ▄████████  ▄█        ▄█       \r\n  ███ ▄███▀ ███  ███▀▀▀██▄   ███    ███   ███    ███   ███    ███ ███       ███       \r\n  ███▐██▀   ███▌ ███   ███   ███    █▀    ███    █▀    ███    ███ ███       ███       \r\n ▄█████▀    ███▌ ███   ███  ▄███         ▄███▄▄▄       ███    ███ ███       ███       \r\n▀▀█████▄    ███▌ ███   ███ ▀▀███ ████▄  ▀▀███▀▀▀     ▀███████████ ███       ███       \r\n  ███▐██▄   ███  ███   ███   ███    ███   ███          ███    ███ ███       ███       \r\n  ███ ▀███▄ ███  ███   ███   ███    ███   ███          ███    ███ ███▌    ▄ ███▌    ▄ \r\n  ███   ▀█▀ █▀    ▀█   █▀    ████████▀    ███          ███    █▀  █████▄▄██ █████▄▄██ \r\n  ▀                                                               ▀         ▀         ");
 Thread.Sleep(2500);
 Console.Clear();
+bool ValidarFormato(string contra)
+{
+    if (contra.Length < 8) return false;
+    bool mayuscula = false, minuscula = false, numero = false, especial = false;
+    foreach (char d in contra) // El foreach sirve para que revise letra por letra lo que se va a escribir de contraseña (en este caso).
+    { //El char d significa que se va a guardar cada carácter de la contraseña en la variable d
+        if (char.IsUpper(d)) mayuscula = true;
+        else if (char.IsLower(d)) minuscula = true;
+        else if (char.IsDigit(d)) numero = true;
+        else especial = true;
+    }
+    return mayuscula && minuscula && numero && especial;
+}
+
+string LeerContra()
+{
+    string contra = "";
+    ConsoleKeyInfo tecla; //Guarda el carácter especial
+
+    do
+    {
+        tecla = Console.ReadKey(true);
+        if (tecla.Key == ConsoleKey.Backspace && contra.Length > 0)
+        {
+            contra = contra.Substring(0, contra.Length - 1); //Si por accidente se confunden en escribir la contraseña entonces borra el carácter y no lo cuenta como parte de la contraseña
+            Console.Write("\b \b"); //Borra el asterisco
+        }
+
+        else if (tecla.Key != ConsoleKey.Enter)
+        {
+            contra += tecla.KeyChar;
+            Console.Write("*");
+        }
+    } while (tecla.Key != ConsoleKey.Enter);
+    Console.WriteLine();
+    return contra;
+}
+//Pantalla de inicio
+Console.WriteLine("===== BIENVENIDO AL JUEGO ====="); //Solo lo puse para que de un mensaje de bienvenida, pero si quieren lo pueden quitar
+Thread.Sleep(1500);
+Console.Clear();
 
 // Login
 string usuario, contrasena;
@@ -56,13 +97,19 @@ do
     if (!UsuarioExiste(usuario))
         Console.WriteLine("El usuario no existe, intenta de nuevo.\n");
 
-} while (!UsuarioExiste(usuario));
+}
+while (!UsuarioExiste(usuario));
 
 do
 {
     Console.Write("Ingrese su contraseña: ");
-    contrasena = Console.ReadLine();
+    contrasena = LeerContra();
 
+    if (!ValidarFormato(contrasena))
+    {
+        Console.WriteLine("No cumple con las reglas de seguridad.\n");
+        continue;
+    }
     if (!ContrasenaCorrecta(usuario, contrasena))
         Console.WriteLine("Contraseña incorrecta, intenta de nuevo.\n");
 
@@ -91,7 +138,3 @@ switch (opcion)
         Thread.Sleep(2300);
         break;
 }
-
-
-
-
