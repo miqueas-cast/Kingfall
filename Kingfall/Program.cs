@@ -72,7 +72,7 @@ string LeerContra()
             Console.Write("\b \b"); //Borra el asterisco
         }
 
-        else if (tecla.Key != ConsoleKey.Enter)
+        else if (tecla.Key != ConsoleKey.Enter && contra.Length < 13)
         {
             contra += tecla.KeyChar;
             Console.Write("*");
