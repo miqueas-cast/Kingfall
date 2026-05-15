@@ -83,10 +83,10 @@ string LeerContra()
 }
 //Pantalla de inicio
 Console.WriteLine("===== BIENVENIDO AL JUEGO ====="); //Solo lo puse para que de un mensaje de bienvenida, pero si quieren lo pueden quitar
-Thread.Sleep(1500);
+//Thread.Sleep(1500);
 Console.Clear();
 
-// Login
+//Login
 string usuario, contrasena;
 
 do
@@ -122,19 +122,32 @@ Thread.Sleep(2300);
 
 Console.Clear();
 
-int opcion = ValidacionEntradas($"Menú:\n1. Iniciar partida\r\n2. Ver reglas del juego\r\n3. Ver puntaje más alto\r\n4. Salir\n> ",1 ,4);
-
-
-switch (opcion)
+bool salir=false;
+do
 {
-    case 1:
-        break;
-    case 2:
-        break;
-    case 3:
-        break;
-    case 4:
-        Console.WriteLine("Saliendo del juego...");
-        Thread.Sleep(2300);
-        break;
-}
+    int opcion = ValidacionEntradas($"Menú:\n1. Iniciar partida\r\n2. Ver reglas del juego\r\n3. Ver puntaje más alto\r\n4. Salir\n> ", 1, 4);
+    switch (opcion)
+    {
+        case 1:
+            Console.Clear();
+            
+
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            
+            Thread.Sleep(2300);
+            break;
+    }
+
+} while (!salir);
+
+
+Console.WriteLine("Saliendo del juego...");
+
+
+
+
