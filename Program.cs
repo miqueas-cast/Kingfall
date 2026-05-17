@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.Design;
+using System.Diagnostics.CodeAnalysis;
+
+// para mostrar flechas en la consola
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 //funciones para validar datos
-
 //validar rango del tablero
 static int ValidacionTablero(string mensaje, int min, int max, Tablero tablero)
 {
@@ -116,7 +119,7 @@ Console.WriteLine("===== BIENVENIDO AL JUEGO ====="); //Solo lo puse para que de
 Console.Clear();
 
 
-/*
+
 //Login
 string usuario, contrasena;
 
@@ -152,26 +155,35 @@ Console.WriteLine($"Acceso concedido...\n\nBienvenido {usuario}");
 Thread.Sleep(2300);
 
 Console.Clear();
-*/
+
+
+// variables globales
+
+string nombrePuntajeMasAlto = "";
+int puntajeMasAlto = 0;
+int puntajeJugador1 = 0;
+int puntajeJugador2 = 0;
+int piezasRestantesJugador1 = 7;
+int piezasRestantesJugador2 = 7;
+int recordInicial = 0;
+bool hayPuntajeRegistrado = false;
 bool salir=false;
 do
 {
-    // variables globales
-
-    int puntajeMasAlto = 0;
-    int puntajeJugador1 = 0;
-    int puntajeJugador2 = 0;
-    int piezasRestantesJugador1 = 7;
-    int piezasRestantesJugador2 = 7;
-
+    Console.Clear();
     int opcion = ValidacionEntradas($"Menú:\n1. Iniciar partida\r\n2. Ver reglas del juego\r\n3. Ver puntaje más alto\r\n4. Salir\n> ", 1, 4);
     switch (opcion)
     {
         case 1:
+
+            //Reinicio de puntajes
+            puntajeJugador1 = 0;
+            puntajeJugador2 = 0;
+            nombrePuntajeMasAlto = "";
             //tablero
             Tablero tablero = new Tablero();
 
-            // jugador1
+            // jugador1 piezas
             Jugador jugador1 = new Jugador();
 
             jugador1.Nombre = "Diana";
@@ -358,40 +370,50 @@ do
                 {
                     Console.WriteLine($"{jugadorActual.Nombre} capturó un {piezaCapturada.Tipo}");
 
-                    if (jugadorActual == jugador1)
+                    // if para determinar cuantas piezas restantes le quedan al jugador
+                    if (piezaCapturada.Dueño == jugador1)
                     {
-                        if (piezaCapturada.Tipo == "Rey")
-                        {
-
-                            piezasRestantesJugador2--;
-                            puntajeJugador1 += 60;
-                            Console.Clear();
-                            MostrarTablero(tablero);
-                            Console.WriteLine($"El jugador {jugadorActual.Nombre} ha ganado porque ha capturado al rey");
-                            break;
-                        }
-                        else
-                        {
-                            piezasRestantesJugador2--;
-                            puntajeJugador1 += 10;
-                        }
+                        piezasRestantesJugador1--;
                     }
                     else
                     {
-                        if (piezaCapturada.Tipo == "Rey")
+                        piezasRestantesJugador2--;
+                    }
+                    if (piezaCapturada.Tipo == "Rey")
+                    {
+                        if (jugadorActual == jugador1)
                         {
-                            piezasRestantesJugador1--;
-                            puntajeJugador2 += 60;
-                            Console.Clear();
-                            MostrarTablero(tablero);
-                            Console.WriteLine($"El jugador {jugadorActual.Nombre} ha ganado porque ha capturado al rey");
-                            break;
+
+                            puntajeJugador1 += 60;
                         }
                         else
                         {
-                            piezasRestantesJugador1--;
+                            puntajeJugador2 += 60;
+                        }
+
+                        Console.Clear();
+                        MostrarTablero(tablero);
+                        Console.WriteLine($"El jugador {jugadorActual.Nombre} ha ganado porque capturó al Rey");
+                        break;
+                    }
+                    else
+                    {
+                        if (jugadorActual == jugador1)
+                        {
+                            puntajeJugador1 += 10;
+                        }
+                        else
+                        {
                             puntajeJugador2 += 10;
                         }
+                    }
+
+                    if (piezasRestantesJugador1 == 0)
+                    {
+                        Console.Clear();
+                        MostrarTablero(tablero);
+                        Console.WriteLine($"El jugador {jugador2.Nombre} ha ganado la partida");
+                        break;
                     }
 
                     if (piezasRestantesJugador2 == 0)
@@ -399,18 +421,10 @@ do
                         Console.Clear();
                         MostrarTablero(tablero);
                         Console.WriteLine($"El jugador {jugador1.Nombre} ha ganado la partida");
-
-                        break;
-                    }
-                    else if (piezasRestantesJugador1 == 0)
-                    {
-                        Console.Clear();
-                        MostrarTablero(tablero);
-                        Console.WriteLine($"El jugador {jugador2.Nombre} ha ganado la partida");
                         break;
                     }
                 }
-                
+
                 // Cambiar Turnos
                 if (jugadorActual == jugador1)
                 {
@@ -421,22 +435,59 @@ do
                     jugadorActual = jugador1;
                 }
             }
+            // determinar puntajeGanador
+            int puntajeGanador;
+
+            if (jugadorActual == jugador1)
+            {
+                puntajeGanador = puntajeJugador1;
+            }
+            else
+            {
+                puntajeGanador = puntajeJugador2;
+            }
+
+            if (!hayPuntajeRegistrado || puntajeGanador > recordInicial)
+            {
+                recordInicial = puntajeGanador;
+                nombrePuntajeMasAlto = jugadorActual.Nombre;
+                hayPuntajeRegistrado = true;
+            }
 
             break;
         case 2:
+            Console.Clear();
+
+           
             break;
         case 3:
+            Console.Clear();
+            if (!hayPuntajeRegistrado)
+            {
+                Console.WriteLine("Aún no hay puntajes registrados");
+            }
+            else
+            {
+                Console.WriteLine("Puntaje más alto");
+                Console.WriteLine($"Jugador: {nombrePuntajeMasAlto}");
+                Console.WriteLine($"Puntos: {recordInicial}");
+            }
+
+            Console.ReadKey();
+
             break;
         case 4:
-            
-            Thread.Sleep(2300);
+            Console.Clear();
+            salir = true;
+            Console.WriteLine("Saliendo del juego...");
+            Thread.Sleep(2000);
             break;
     }
 
 } while (!salir);
 
 
-Console.WriteLine("Saliendo del juego...");
+
 
 static void MostrarTablero(Tablero tablero)
 {
@@ -590,15 +641,15 @@ class Jugador
 {
     public string Nombre;
     public int Numero;
-}
+    public int puntos;
 
+}
 class Pieza
 {
     public string Tipo;
     public char Simbolo;
     public Jugador Dueño;
 }
-
 class Tablero
 {
     public Pieza[,] Casillas = new Pieza[8, 8];
