@@ -1,4 +1,8 @@
 ﻿using System.ComponentModel.Design;
+
+//funciones para validar datos
+
+//validar rango del tablero
 static int ValidacionTablero(string mensaje, int min, int max, Tablero tablero)
 {
     int valor;
@@ -24,6 +28,7 @@ static int ValidacionTablero(string mensaje, int min, int max, Tablero tablero)
     } while (!esValido);
     return valor;
 }
+//convertir a enteros
 static int ValidacionEntradas(string mensaje, int min, int max)
 {
     int valor;
@@ -110,6 +115,8 @@ Console.WriteLine("===== BIENVENIDO AL JUEGO ====="); //Solo lo puse para que de
 //Thread.Sleep(1500);
 Console.Clear();
 
+
+/*
 //Login
 string usuario, contrasena;
 
@@ -145,10 +152,18 @@ Console.WriteLine($"Acceso concedido...\n\nBienvenido {usuario}");
 Thread.Sleep(2300);
 
 Console.Clear();
-
+*/
 bool salir=false;
 do
 {
+    // variables globales
+
+    int puntajeMasAlto = 0;
+    int puntajeJugador1 = 0;
+    int puntajeJugador2 = 0;
+    int piezasRestantesJugador1 = 7;
+    int piezasRestantesJugador2 = 7;
+
     int opcion = ValidacionEntradas($"Menú:\n1. Iniciar partida\r\n2. Ver reglas del juego\r\n3. Ver puntaje más alto\r\n4. Salir\n> ", 1, 4);
     switch (opcion)
     {
@@ -280,14 +295,17 @@ do
                     piezaMover = tablero.Casillas[filaOrigen, columnaOrigen];
                     if (piezaMover == null)
                     {
+                        Console.Clear();
+                        MostrarTablero(tablero);
+                        Console.WriteLine("Turno de: " + jugadorActual.Nombre);
                         Console.WriteLine("No hay pieza en esa posición");
-                        Console.ReadKey();
+
                         continue;
                     }
                     if (piezaMover.Dueño != jugadorActual)
                     {
                         Console.WriteLine("No puedes mover la pieza del oponente");
-                        Console.ReadKey();
+
                         continue;
                     }
                     break;
@@ -314,8 +332,8 @@ do
                         Console.ReadKey();
                         continue;
                     }
-
                     break;
+
                 } while (true);
 
                 // función para validar el movimiento por tipo de pieza
@@ -328,9 +346,72 @@ do
                     continue;
                 }
 
-                tablero.Casillas[filaDestino, columnaDestino] = piezaMover;
 
+                // movimiento de piezas
+                Pieza piezaCapturada = tablero.Casillas[filaDestino, columnaDestino];
+                tablero.Casillas[filaDestino, columnaDestino] = piezaMover;
                 tablero.Casillas[filaOrigen, columnaOrigen] = null;
+
+
+                //Sistema de puntajes
+                if(piezaCapturada != null)
+                {
+                    Console.WriteLine($"{jugadorActual.Nombre} capturó un {piezaCapturada.Tipo}");
+
+                    if (jugadorActual == jugador1)
+                    {
+                        if (piezaCapturada.Tipo == "Rey")
+                        {
+
+                            piezasRestantesJugador2--;
+                            puntajeJugador1 += 60;
+                            Console.Clear();
+                            MostrarTablero(tablero);
+                            Console.WriteLine($"El jugador {jugadorActual.Nombre} ha ganado porque ha capturado al rey");
+                            break;
+                        }
+                        else
+                        {
+                            piezasRestantesJugador2--;
+                            puntajeJugador1 += 10;
+                        }
+                    }
+                    else
+                    {
+                        if (piezaCapturada.Tipo == "Rey")
+                        {
+                            piezasRestantesJugador1--;
+                            puntajeJugador2 += 60;
+                            Console.Clear();
+                            MostrarTablero(tablero);
+                            Console.WriteLine($"El jugador {jugadorActual.Nombre} ha ganado porque ha capturado al rey");
+                            break;
+                        }
+                        else
+                        {
+                            piezasRestantesJugador1--;
+                            puntajeJugador2 += 10;
+                        }
+                    }
+
+                    if (piezasRestantesJugador2 == 0)
+                    {
+                        Console.Clear();
+                        MostrarTablero(tablero);
+                        Console.WriteLine($"El jugador {jugador1.Nombre} ha ganado la partida");
+
+                        break;
+                    }
+                    else if (piezasRestantesJugador1 == 0)
+                    {
+                        Console.Clear();
+                        MostrarTablero(tablero);
+                        Console.WriteLine($"El jugador {jugador2.Nombre} ha ganado la partida");
+                        break;
+                    }
+                }
+                
+                // Cambiar Turnos
                 if (jugadorActual == jugador1)
                 {
                     jugadorActual = jugador2;
@@ -384,13 +465,13 @@ static void MostrarTablero(Tablero tablero)
             {
                 Console.Write(piezaActual.Simbolo + "   ");
             }
-
         }
-
         Console.WriteLine();
         Console.WriteLine();
     }
 }
+
+
 //función principal para validar movimiento por tipo
 static bool MovimientoValidoPorTipo(Pieza piezaMover, int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
 {
@@ -411,6 +492,7 @@ static bool MovimientoValidoPorTipo(Pieza piezaMover, int filaOrigen, int column
 
     return false;
 }
+
 // movimiento del rey
 static bool MovimientoValidoRey(int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino)
 {
@@ -419,6 +501,7 @@ static bool MovimientoValidoRey(int filaOrigen, int columnaOrigen, int filaDesti
 
     return diferenciaFila <= 1 && diferenciaColumna <= 1;
 }
+
 //movimiento de la torre
 static bool MovimientoValidoTorre(int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
 {
@@ -470,6 +553,7 @@ static bool CaminoLibre(int filaOrigen, int columnaOrigen, int filaDestino, int 
 
     return true;
 }
+
 //movimiento del soldado
 static bool MovimientoValidoSoldado(Pieza piezaMover, int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
 {
@@ -500,6 +584,7 @@ static bool MovimientoValidoSoldado(Pieza piezaMover, int filaOrigen, int column
 
     return avanzaRecto || atacaDiagonal;
 }
+
 //clases
 class Jugador
 {
