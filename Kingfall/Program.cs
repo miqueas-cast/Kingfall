@@ -1,5 +1,29 @@
 ﻿using System.ComponentModel.Design;
-
+static int ValidacionTablero(string mensaje, int min, int max, Tablero tablero)
+{
+    int valor;
+    bool esValido;
+    do
+    {
+        Console.Write(mensaje);
+        string entrada = Console.ReadLine();
+        esValido = int.TryParse(entrada, out valor);
+        if (!esValido)
+        {
+            Console.Clear();
+            MostrarTablero(tablero);
+            Console.WriteLine($"Por favor ingrese una posición valida");
+        }
+        if (esValido && (valor < min || valor > max))
+        {
+            Console.Clear();
+            MostrarTablero(tablero);
+            Console.WriteLine($"Posición fuera del rango");
+            esValido = false;
+        }
+    } while (!esValido);
+    return valor;
+}
 static int ValidacionEntradas(string mensaje, int min, int max)
 {
     int valor;
@@ -129,8 +153,193 @@ do
     switch (opcion)
     {
         case 1:
-            Console.Clear();
-            
+            //tablero
+            Tablero tablero = new Tablero();
+
+            // jugador1
+            Jugador jugador1 = new Jugador();
+
+            jugador1.Nombre = "Diana";
+            jugador1.Numero = 1;
+
+            Pieza rey = new Pieza();
+            rey.Tipo = "Rey";
+            rey.Simbolo = 'r';
+            rey.Dueño = jugador1;
+
+            Pieza torre = new Pieza();
+            torre.Tipo = "Torre";
+            torre.Simbolo = 't';
+            torre.Dueño = jugador1;
+
+            Pieza torre1 = new Pieza();
+            torre1.Tipo = "Torre";
+            torre1.Simbolo = 't';
+            torre1.Dueño = jugador1;
+
+            Pieza soldado = new Pieza();
+            soldado.Tipo = "Soldado";
+            soldado.Simbolo = 's';
+            soldado.Dueño = jugador1;
+
+            Pieza soldado1 = new Pieza();
+            soldado1.Tipo = "Soldado";
+            soldado1.Simbolo = 's';
+            soldado1.Dueño = jugador1;
+
+            Pieza soldado2 = new Pieza();
+            soldado2.Tipo = "Soldado";
+            soldado2.Simbolo = 's';
+            soldado2.Dueño = jugador1;
+
+            Pieza soldado3 = new Pieza();
+            soldado3.Tipo = "Soldado";
+            soldado3.Simbolo = 's';
+            soldado3.Dueño = jugador1;
+
+
+            // jugador 2
+            Jugador jugador2 = new Jugador();
+            jugador2.Nombre = "Ivan";
+            jugador2.Numero = 2;
+
+            Pieza rey2 = new Pieza();
+            rey2.Tipo = "Rey";
+            rey2.Simbolo = 'R';
+            rey2.Dueño = jugador2;
+
+            Pieza torre2 = new Pieza();
+            torre2.Tipo = "Torre";
+            torre2.Simbolo = 'T';
+            torre2.Dueño = jugador2;
+
+            Pieza torre3 = new Pieza();
+            torre3.Tipo = "Torre";
+            torre3.Simbolo = 'T';
+            torre3.Dueño = jugador2;
+
+            Pieza soldado4 = new Pieza();
+            soldado4.Tipo = "Soldado";
+            soldado4.Simbolo = 'S';
+            soldado4.Dueño = jugador2;
+
+            Pieza soldado5 = new Pieza();
+            soldado5.Tipo = "Soldado";
+            soldado5.Simbolo = 'S';
+            soldado5.Dueño = jugador2;
+
+            Pieza soldado6 = new Pieza();
+            soldado6.Tipo = "Soldado";
+            soldado6.Simbolo = 'S';
+            soldado6.Dueño = jugador2;
+
+            Pieza soldado7 = new Pieza();
+            soldado7.Tipo = "Soldado";
+            soldado7.Simbolo = 'S';
+            soldado7.Dueño = jugador2;
+
+
+            // Posiciones iniciales jugador 1
+            tablero.Casillas[0, 0] = torre;
+            tablero.Casillas[0, 1] = soldado;
+            tablero.Casillas[0, 2] = soldado1;
+            tablero.Casillas[0, 3] = rey;
+            tablero.Casillas[0, 4] = soldado2;
+            tablero.Casillas[0, 5] = soldado3;
+            tablero.Casillas[0, 6] = torre1;
+
+            // Posiciones iniciales jugador 2
+            tablero.Casillas[7, 0] = torre2;
+            tablero.Casillas[7, 1] = soldado4;
+            tablero.Casillas[7, 2] = soldado5;
+            tablero.Casillas[7, 3] = rey2;
+            tablero.Casillas[7, 4] = soldado6;
+            tablero.Casillas[7, 5] = soldado7;
+            tablero.Casillas[7, 6] = torre3;
+
+            MostrarTablero(tablero);
+            // 
+
+            Jugador jugadorActual = jugador1;
+            while (true)
+            {
+                Console.Clear();
+                MostrarTablero(tablero);
+                Console.WriteLine("Turno de: " + jugadorActual.Nombre);
+                Console.WriteLine();
+                Pieza piezaMover;
+
+                // Ingresar la posición de la pieza a mover
+                int filaOrigen;
+                int columnaOrigen;
+                do
+                {
+                    filaOrigen = ValidacionTablero("Fila origen: ", 0, 7, tablero);
+                    columnaOrigen = ValidacionTablero("Columna origen: ", 0, 7, tablero);
+
+                    piezaMover = tablero.Casillas[filaOrigen, columnaOrigen];
+                    if (piezaMover == null)
+                    {
+                        Console.WriteLine("No hay pieza en esa posición");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    if (piezaMover.Dueño != jugadorActual)
+                    {
+                        Console.WriteLine("No puedes mover la pieza del oponente");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    break;
+                } while (true);
+
+                // Ingresar la posición de destino
+                int filaDestino;
+                int columnaDestino;
+                do
+                {
+                    filaDestino = ValidacionTablero("Fila destino:", 0, 7, tablero);
+                    columnaDestino = ValidacionTablero("Columna destino:", 0, 7, tablero);
+
+                    Pieza piezaDestino = tablero.Casillas[filaDestino, columnaDestino];
+                    if (piezaDestino != null && piezaDestino.Dueño == jugadorActual)
+                    {
+                        Console.WriteLine("No puedes moverte sobre tu propia pieza");
+                        Console.ReadKey();
+                        continue;
+                    }
+                    if (piezaMover.Tipo == "Rey" && Math.Abs(filaDestino - filaOrigen) > 1 || Math.Abs(columnaDestino - columnaOrigen) > 1)
+                    {
+                        Console.WriteLine("El rey solo puede moverse una casilla en cualquier dirección");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    break;
+                } while (true);
+
+                // función para validar el movimiento por tipo de pieza
+                bool movimientoValido = MovimientoValidoPorTipo(piezaMover, filaOrigen, columnaOrigen, filaDestino, columnaDestino, tablero);
+
+                if (!movimientoValido)
+                {
+                    Console.WriteLine("Movimiento inválido para esa pieza");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                tablero.Casillas[filaDestino, columnaDestino] = piezaMover;
+
+                tablero.Casillas[filaOrigen, columnaOrigen] = null;
+                if (jugadorActual == jugador1)
+                {
+                    jugadorActual = jugador2;
+                }
+                else
+                {
+                    jugadorActual = jugador1;
+                }
+            }
 
             break;
         case 2:
@@ -148,6 +357,164 @@ do
 
 Console.WriteLine("Saliendo del juego...");
 
+static void MostrarTablero(Tablero tablero)
+{
+    Console.Write("    ");
+    for (int columna = 0; columna < 8; columna++)
+    {
+        Console.Write($"{columna}   ");
+    }
 
+    Console.WriteLine();
+    Console.WriteLine();
 
+    for (int fila = 0; fila < 8; fila++)
+    {
+        Console.Write(fila + "   ");
 
+        for (int columna = 0; columna < 8; columna++)
+        {
+            Pieza piezaActual = tablero.Casillas[fila, columna];
+
+            if (piezaActual == null)
+            {
+                Console.Write(".   ");
+            }
+            else
+            {
+                Console.Write(piezaActual.Simbolo + "   ");
+            }
+
+        }
+
+        Console.WriteLine();
+        Console.WriteLine();
+    }
+}
+//función principal para validar movimiento por tipo
+static bool MovimientoValidoPorTipo(Pieza piezaMover, int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
+{
+    if (piezaMover.Tipo == "Rey")
+    {
+
+        return MovimientoValidoRey(filaOrigen, columnaOrigen, filaDestino, columnaDestino);
+    }
+    else if (piezaMover.Tipo == "Torre")
+    {
+        return MovimientoValidoTorre(filaOrigen, columnaOrigen, filaDestino, columnaDestino, tablero);
+
+    }
+    else if (piezaMover.Tipo == "Soldado")
+    {
+        return MovimientoValidoSoldado(piezaMover, filaOrigen, columnaOrigen, filaDestino, columnaDestino, tablero);
+    }
+
+    return false;
+}
+// movimiento del rey
+static bool MovimientoValidoRey(int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino)
+{
+    int diferenciaFila = Math.Abs(filaDestino - filaOrigen);
+    int diferenciaColumna = Math.Abs(columnaDestino - columnaOrigen);
+
+    return diferenciaFila <= 1 && diferenciaColumna <= 1;
+}
+//movimiento de la torre
+static bool MovimientoValidoTorre(int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
+{
+    bool mismaFila = filaOrigen == filaDestino;
+    bool mismaColumna = columnaOrigen == columnaDestino;
+
+    if (!mismaFila && !mismaColumna)
+    {
+        return false;
+    }
+    return CaminoLibre(filaOrigen, columnaOrigen, filaDestino, columnaDestino, tablero);
+}
+static bool CaminoLibre(int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
+{
+    int avanceFila = 0;
+    int avanceColumna = 0;
+
+    if (filaDestino > filaOrigen)
+    {
+        avanceFila = 1;
+    }
+    else if (filaDestino < filaOrigen)
+    {
+        avanceFila = -1;
+    }
+
+    if (columnaDestino > columnaOrigen)
+    {
+        avanceColumna = 1;
+    }
+    else if (columnaDestino < columnaOrigen)
+    {
+        avanceColumna = -1;
+    }
+
+    int filaActual = filaOrigen + avanceFila;
+    int columnaActual = columnaOrigen + avanceColumna;
+
+    while (filaActual != filaDestino || columnaActual != columnaDestino)
+    {
+        if (tablero.Casillas[filaActual, columnaActual] != null)
+        {
+            return false;
+        }
+
+        filaActual += avanceFila;
+        columnaActual += avanceColumna;
+    }
+
+    return true;
+}
+//movimiento del soldado
+static bool MovimientoValidoSoldado(Pieza piezaMover, int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino, Tablero tablero)
+{
+    int direccion;
+
+    if (piezaMover.Dueño.Numero == 1)
+    {
+        direccion = 1;
+    }
+    else
+    {
+        direccion = -1;
+    }
+
+    int diferenciaFila = filaDestino - filaOrigen;
+    int diferenciaColumna = columnaDestino - columnaOrigen;
+
+    Pieza piezaDestino = tablero.Casillas[filaDestino, columnaDestino];
+
+    bool avanzaRecto = diferenciaFila == direccion &&
+                       diferenciaColumna == 0 &&
+                       piezaDestino == null;
+
+    bool atacaDiagonal = diferenciaFila == direccion &&
+                         Math.Abs(diferenciaColumna) == 1 &&
+                         piezaDestino != null &&
+                         piezaDestino.Dueño != piezaMover.Dueño;
+
+    return avanzaRecto || atacaDiagonal;
+}
+//clases
+class Jugador
+{
+    public string Nombre;
+    public int Numero;
+}
+
+class Pieza
+{
+    public string Tipo;
+    public char Simbolo;
+    public Jugador Dueño;
+}
+
+class Tablero
+{
+    public Pieza[,] Casillas = new Pieza[8, 8];
+}
