@@ -456,9 +456,7 @@ do
 
             break;
         case 2:
-            Console.Clear();
-
-           
+            
             break;
         case 3:
             Console.Clear();
